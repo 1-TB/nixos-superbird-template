@@ -1,0 +1,16 @@
+services:
+  nix:
+    image: ghcr.io/joeyeaimgh/nixos-superbird/builder:latest
+    security_opt:
+      - label:disable
+    privileged: true
+    volumes:
+      - ./:/workdir
+      - nix-store:/nix
+      - nix-root:/root
+    stdin_open: true
+    tty: true
+
+volumes:
+  nix-store:
+  nix-root:
