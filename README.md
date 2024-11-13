@@ -9,7 +9,7 @@ For documentation about what is going on here, visit <https://github.com/JoeyEam
 without build caching:
 
 ```sh
-docker run --privileged --rm -it -v ./:/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
+docker run --privileged --rm -it -v $(pwd):/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
 ```
 
 with build caching:
@@ -29,6 +29,18 @@ or all-in-one:
 ```sh
 docker compose up
 ```
+
+### MacOS Notes
+
+On MacOS, [there is a bug that prevents filesystem permissions from working properly](https://github.com/docker/for-mac/issues/6243). Until this is fixed, a workaround is to go into the Docker Desktop settings, scroll down to Virtual Machine Options, and select `osxfs (Legacy)` as the file sharing implementation.
+
+<!-- MacOS does not use uid/gid 1000:1000 like Linux does. To make sure permissions work, run the Docker commands with the environment variable `SUPERBIRD_CHOWN` set to your user and group. You can see your user and primary group (usually `staff`) by running the `id` command.
+
+For example:
+
+```sh
+docker run -e SUPERBIRD_CHOWN='501:20' --privileged --rm -it -v $(pwd):/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
+``` -->
 
 ## Build Installer (local)
 
