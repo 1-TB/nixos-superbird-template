@@ -1,6 +1,6 @@
 services:
   nix:
-    image: ghcr.io/joeyeaimgh/nixos-superbird/builder:latest
+    image: ghcr.io/joeyeamigh/nixos-superbird/builder:latest
     security_opt:
       - label:disable
     privileged: true

@@ -9,7 +9,7 @@ For documentation about what is going on here, visit <https://github.com/JoeyEam
 without build caching:
 
 ```sh
-docker run --privileged --rm -it -v ./:/workdir ghcr.io/joeyeaimgh/nixos-superbird/builder:latest
+docker run --privileged --rm -it -v ./:/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
 ```
 
 with build caching:
@@ -21,7 +21,7 @@ docker run --privileged --rm -it \
   -v ./:/workdir \
   -v nix-store:/nix \
   -v nix-root:/root \
-  ghcr.io/joeyeaimgh/nixos-superbird/builder:latest
+  ghcr.io/joeyeamigh/nixos-superbird/builder:latest
 ```
 
 or all-in-one:

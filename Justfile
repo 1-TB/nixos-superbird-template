@@ -1,5 +1,5 @@
 docker-build:
-  docker run --privileged --rm -it -v ./:/workdir ghcr.io/joeyeaimgh/nixos-superbird/builder:latest
+  docker run --privileged --rm -it -v ./:/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
 
 build:
   nix build '.#nixosConfigurations.superbird.config.system.build.installer' -j"$(nproc)" --show-trace
