@@ -22,6 +22,8 @@ installer:
   sudo ./scripts/shrink-img.sh
   echo "rootfs (compact) is $(stat -Lc%s -- ./linux/rootfs.img | numfmt --to=iec)"
 
+ssh:
+  ssh -i ./out/ssh/ssh_host_ed25519_key root@172.16.42.2
 
 run-installer:
   just installer
