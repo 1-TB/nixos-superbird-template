@@ -76,7 +76,7 @@ If you are planning on building multiple iterations of the system, build the ins
 docker run --privileged -it -v $(pwd):/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
 ```
 
-Then, after flashing the device, bring your network interface online with the `./out/ssh/ssh.sh` script. Then you can run the Docker container with host networking, and push any changes directly.
+Then, after flashing the device, bring your network interface online by running `cd ./out && ./scripts/ssh.sh`. Then you can run the Docker container with host networking, and push any changes directly.
 
 ```sh
 docker run --privileged --network=host --entrypoint bash -it -v ./:/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
