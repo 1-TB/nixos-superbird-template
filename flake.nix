@@ -1,8 +1,22 @@
 {
   description = "NixOS Superbird configuration";
+
+  nixConfig = {
+    extra-substituters = [
+      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
+      "https://superbird.attic.claiborne.soy/superbird"
+    ];
+    extra-trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "superbird:r9Hm/REl7BEr6+9UQoS+nxzqxY2sKUhsDCNy5PGQbDU="
+    ];
+  };
+
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixos-superbird.url = "github:joeyeamigh/nixos-superbird/main";
+    nixpkgs.follows = "nixos-superbird/nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
   };
 
@@ -23,9 +37,9 @@
           modules = [
             nixos-superbird.nixosModules.superbird
             (
-              { pkgs, ... }:
+              { ... }:
               {
-                superbird.gui.app = "${pkgs.cog}/bin/cog https://github.com/JoeyEamigh/nixos-superbird";
+                superbird.gui.kiosk = "https://github.com/JoeyEamigh/nixos-superbird";
                 system.stateVersion = "24.11";
               }
             )
