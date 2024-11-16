@@ -19,7 +19,9 @@ jobs:
         run: docker run --privileged -v $(pwd):/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
 
       - name: Zip the installer
-        run: cd ./out/ && zip -r nixos-superbird-installer.zip .
+        run: |
+          sudo chown -R $(whoami):$(whoami)
+          cd ./out/ && zip -r nixos-superbird-installer.zip .
 
       - name: Archive the installer
         uses: actions/upload-artifact@v4
