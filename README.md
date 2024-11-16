@@ -4,6 +4,8 @@ A flake template for [`nixos-superbird`](https://github.com/JoeyEamigh/nixos-sup
 
 For documentation about what is going on here, visit <https://github.com/JoeyEamigh/nixos-superbird>.
 
+Whenever there is a new update to `nixos-superbird`, you must run `nix flake update` (or `rm flake.nix` if using docker) to get the newest version.
+
 ## Build Installer (docker)
 
 without build caching:
