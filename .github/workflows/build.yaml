@@ -1,0 +1,23 @@
+name: Build Installer
+run-name: Build Installer for ${{ github.actor }}
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone the repo
+        uses: actions/checkout@v4
+
+      - name: Build the installer in Docker
+        run: docker run --privileged -v $(pwd):/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
+
+      - name: Zip the installer
+        run: cd ./out/ && zip -r nixos-superbird-installer.zip .
+
+      - name: Archive the installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.actor }}-nixos-superbird-installer.zip
+          path: ./out/nixos-superbird-installer.zip
