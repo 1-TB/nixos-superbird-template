@@ -20,7 +20,7 @@ jobs:
 
       - name: Zip the installer
         run: |
-          sudo chown -R $(whoami):$(whoami)
+          sudo chown -R $(whoami):$(whoami) ./out
           cd ./out/ && zip -r nixos-superbird-installer.zip .
 
       - name: Archive the installer
