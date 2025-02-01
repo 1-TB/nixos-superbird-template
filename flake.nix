@@ -12,6 +12,7 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "superbird:r9Hm/REl7BEr6+9UQoS+nxzqxY2sKUhsDCNy5PGQbDU="
     ];
+    auto-optimise-store = true;
   };
 
   inputs = {
@@ -34,12 +35,17 @@
       nixosConfigurations = {
         superbird = nixosSystem {
           system = "aarch64-linux";
+          specialArgs = {
+            inherit self;
+          };
           modules = [
             nixos-superbird.nixosModules.superbird
             (
               { ... }:
               {
-                superbird.gui.kiosk = "https://github.com/JoeyEamigh/nixos-superbird";
+                superbird.gui.kiosk_url = "https://github.com/JoeyEamigh/nixos-superbird";
+
+                superbird.stateVersion = "0.2";
                 system.stateVersion = "24.11";
               }
             )
@@ -56,10 +62,6 @@
             sshUser = "root";
             path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.superbird;
             user = "root";
-            sshOpts = [
-              "-i"
-              "${self.nixosConfigurations.superbird.config.system.build.ed25519Key}"
-            ];
           };
         };
       };

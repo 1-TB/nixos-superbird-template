@@ -1,17 +1,13 @@
 docker-build:
   docker run --privileged --rm -it -v ./:/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
 
-build:
-  nix build '.#nixosConfigurations.superbird.config.system.build.installer' -j"$(nproc)" --show-trace
-
 installer:
   #!/usr/bin/env bash
   set -euo pipefail
 
-  nix build '.#nixosConfigurations.superbird.config.system.build.installer' -j$(nproc) --show-trace
-  echo "kernel is $(stat -Lc%s -- result/linux/kernel | numfmt --to=iec)"
-  echo "initrd is $(stat -Lc%s -- result/linux/initrd.img | numfmt --to=iec)"
-  echo "rootfs (sparse) is $(stat -Lc%s -- result/linux/rootfs.img | numfmt --to=iec)"
+  nix build '.#nixosConfigurations.superbird.config.system.build.installer' --show-trace
+  echo "kernel is $(stat -Lc%s -- result/builder/kernel | numfmt --to=iec)"
+  echo "rootfs is $(stat -Lc%s -- result/rootfs.img | numfmt --to=iec)"
 
   sudo rm -rf ./out
   mkdir ./out
@@ -19,22 +15,17 @@ installer:
   chown -R $(whoami):$(whoami) ./out
   cd ./out
 
-  sudo ./scripts/shrink-img.sh
-  echo "rootfs (compact) is $(stat -Lc%s -- ./linux/rootfs.img | numfmt --to=iec)"
+  sudo ./scripts/make-bootfs.sh
+  echo "bootfs built!"
 
-ssh:
-  ssh -i ./out/ssh/ssh_host_ed25519_key root@172.16.42.2
-
-run-installer:
-  just installer
-  cd out && ./install.sh
+  just zip-installer
 
 zip-installer:
   #!/usr/bin/env bash
   set -euo pipefail
 
   cd ./out/
-  zip -r nixos-superbird-installer.zip .
+  zip nixos.zip rootfs.img bootfs.bin meta.json env.txt readme.md
 
 push:
   nix run github:serokell/deploy-rs

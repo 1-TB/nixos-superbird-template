@@ -25,4 +25,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.actor }}-nixos-superbird-installer
-          path: ./out/*
+          path: |
+            ./out/bootfs.bin
+            ./out/rootfs.img
+            ./out/meta.json
+            ./out/env.txt
+            ./out/readme.md

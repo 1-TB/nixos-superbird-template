@@ -4,32 +4,14 @@ A flake template for [`nixos-superbird`](https://github.com/JoeyEamigh/nixos-sup
 
 For documentation about what is going on here, visit <https://github.com/JoeyEamigh/nixos-superbird>.
 
-Whenever there is a new update to `nixos-superbird`, you must run `nix flake update` (or `rm flake.nix` if using docker) to get the newest version.
+Whenever there is a new update to `nixos-superbird`, you must run `nix flake update` (or `rm flake.lock` if using docker) to get the newest version.
+
+Join the [Thing Labs Discord](https://tl.mt/d) for the most up-to-date information on Car Thing Hacking!
 
 ## Build Installer (docker)
 
-without build caching:
-
 ```sh
 docker run --privileged --rm -it -v $(pwd):/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
-```
-
-with build caching:
-
-```sh
-docker volume create nix-store
-docker volume create nix-root
-docker run --privileged --rm -it \
-  -v ./:/workdir \
-  -v nix-store:/nix \
-  -v nix-root:/root \
-  ghcr.io/joeyeamigh/nixos-superbird/builder:latest
-```
-
-or all-in-one:
-
-```sh
-docker compose up
 ```
 
 ### MacOS Notes
@@ -49,8 +31,7 @@ docker run -e SUPERBIRD_CHOWN='501:20' --privileged --rm -it -v $(pwd):/workdir 
 ```sh
 nix build '.#nixosConfigurations.superbird.config.system.build.installer' -j$(nproc) --show-trace
 echo "kernel is $(stat -Lc%s -- result/linux/kernel | numfmt --to=iec)"
-echo "initrd is $(stat -Lc%s -- result/linux/initrd.img | numfmt --to=iec)"
-echo "rootfs (sparse) is $(stat -Lc%s -- result/linux/rootfs.img | numfmt --to=iec)"
+echo "rootfs is $(stat -Lc%s -- result/linux/rootfs.img | numfmt --to=iec)"
 
 sudo rm -rf ./out
 mkdir ./out
@@ -58,17 +39,13 @@ cp -r ./result/* ./out/
 chown -R $(whoami):$(whoami) ./out
 cd ./out
 
-sudo ./scripts/shrink-img.sh
-echo "rootfs (compact) is $(stat -Lc%s -- ./linux/rootfs.img | numfmt --to=iec)"
+sudo ./scripts/make-bootfs.sh
+echo "bootfs built!"
 ```
 
 ## Run Installer
 
-```sh
-cd out
-
-./install.sh
-```
+<https://terbium.app/>
 
 ## Push System Over SSH (Development)
 
@@ -78,7 +55,7 @@ If you are planning on building multiple iterations of the system, build the ins
 docker run --privileged -it -v $(pwd):/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
 ```
 
-Then, after flashing the device, bring your network interface online by running `cd ./out && ./scripts/ssh.sh`. Then you can run the Docker container with host networking, and push any changes directly.
+Then, after flashing the device, ensure your device attains the ip address `172.16.42.1` from the superbird. Then you can run the Docker container with host networking, and push any changes directly over ssh. There is no ssh password by default.
 
 ```sh
 docker run --privileged --network=host --entrypoint bash -it -v ./:/workdir ghcr.io/joeyeamigh/nixos-superbird/builder:latest
