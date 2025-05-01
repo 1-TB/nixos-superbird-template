@@ -31,7 +31,7 @@
           nixos-superbird.nixosModules.superbird
           ./nix/macro-pad-module.nix # Our custom module definition
           ( # Inline configuration block
-            { config, pkgs, ... }: # pkgs here is provided by nixosSystem
+            { config, pkgs, ... }:
             {
               system.stateVersion = "24.11";
               superbird.stateVersion = "0.2";
@@ -50,8 +50,16 @@
               networking.firewall.enable = false;
               networking.useDHCP = false;
               environment.systemPackages = [ pkgs.python3 pkgs.git pkgs.chromium ];
+
+              # User settings
               users.users.root.extraGroups = [ "input" ];
-              users.users.weston.extraGroups = [ "input" ];
+              users.users.weston.extraGroups = [ "input" ]; # Existing setting
+
+              # --- Add these lines to fix assertions ---
+              users.users.weston.isSystemUser = true; # Define user type
+              users.users.weston.group = "weston";    # Define primary group
+              users.groups.weston = {};               # Define the 'weston' group
+              # --- End of additions ---
             }
           )
         ];
