@@ -14,14 +14,8 @@
     }:
     let
       targetSystem = "aarch64-linux";
-      # --- Apply the nixos-superbird overlay ---
-      pkgs_aarch64 = import nixpkgs {
-        system = targetSystem;
-        # Use the overlay provided by the nixos-superbird input flake
-        overlays = [ nixos-superbird.overlays.default ];
-      };
-      # --- End overlay application ---
-      macro-pad-backend-pkg = import ./nix/backend-package.nix { pkgs = pkgs_aarch64; };
+      # Import the backend package *definition function* (not evaluated yet)
+      macro-pad-backend-def = import ./nix/backend-package.nix;
     in
     {
       # Define the NixOS configuration directly
@@ -29,14 +23,15 @@
         system = targetSystem;
         specialArgs = {
           inherit self;
-          pkgs = pkgs_aarch64; # Pass pkgs *with* the overlay applied
-          macro-pad-backend-pkg = macro-pad-backend-pkg;
+          # Pass the definition function to the module system
+          macro-pad-backend-def = macro-pad-backend-def;
+          # pkgs is now provided implicitly by nixosSystem
         };
         modules = [
           nixos-superbird.nixosModules.superbird
-          ./nix/macro-pad-module.nix # Our custom module
-          ( # Configuration previously in the flake.nix inline block
-            { config, pkgs, ... }: # pkgs here also has the overlay
+          ./nix/macro-pad-module.nix # Our custom module definition
+          ( # Inline configuration block
+            { config, pkgs, ... }: # pkgs here is provided by nixosSystem
             {
               system.stateVersion = "24.11";
               superbird.stateVersion = "0.2";
@@ -62,14 +57,19 @@
         ];
       }; # End nixosConfigurations
 
-      # Define packages attribute set
-      packages = {
+      # Define packages - get pkgs from the evaluated NixOS configuration
+      packages = let
+        # Get the actual pkgs instance used by the nixos configuration above
+        pkgsForTarget = self.nixosConfigurations.superbird.pkgs;
+      in {
         # Attribute set for the target system
         ${targetSystem} = {
-           # Packages for aarch64-linux defined *inside* this set
-           macro-pad-backend = macro-pad-backend-pkg;
+           # Evaluate the backend definition using the config's pkgs
+           macro-pad-backend = macro-pad-backend-def { pkgs = pkgsForTarget; };
+           # Get the installer derivation from the config result
            installer = self.nixosConfigurations.superbird.config.system.build.installer;
-           default = self.packages.${targetSystem}.installer; # Use self to reference within outputs
+           # Set the default package for convenience
+           default = self.packages.${targetSystem}.installer;
         };
         # You could add packages for other systems here if needed
         # x86_64-linux = { ... };
