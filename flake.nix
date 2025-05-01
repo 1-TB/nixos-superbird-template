@@ -1,4 +1,12 @@
-outputs =
+{
+  description = "NixOS Superbird configuration for Macro Pad";
+
+  inputs = {
+    nixos-superbird.url = "github:joeyeamigh/nixos-superbird/main";
+    nixpkgs.follows = "nixos-superbird/nixpkgs";
+  };
+
+  outputs =
     {
       self,
       nixpkgs,
@@ -49,7 +57,7 @@ outputs =
         ];
       }; # End nixosConfigurations
 
-      # --- Corrected Packages Definition ---
+      # Define packages attribute set
       packages = {
         # Attribute set for the target system
         ${targetSystem} = {
@@ -58,8 +66,13 @@ outputs =
            installer = self.nixosConfigurations.superbird.config.system.build.installer;
            default = self.packages.${targetSystem}.installer; # Use self to reference within outputs
         };
-
+        # You could add packages for other systems here if needed
+        # x86_64-linux = { ... };
       }; # End packages
 
+      # Define other outputs like devShells if needed
+      # devShells = { ... };
 
-    };
+    }; # End outputs
+
+}
