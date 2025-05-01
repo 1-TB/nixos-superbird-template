@@ -1,0 +1,168 @@
+body {
+    font-family: sans-serif;
+    background-color: #282c34;
+    color: #abb2bf;
+    padding: 1em;
+    touch-action: manipulation; /* Improve touch responsiveness */
+    overscroll-behavior: contain; /* Prevent pull-to-refresh */
+    -webkit-user-select: none; /* Disable text selection */
+    user-select: none;
+    -webkit-tap-highlight-color: transparent; /* Disable tap highlight */
+}
+
+h1, h2 {
+    color: #61afef;
+    border-bottom: 1px solid #4b5263;
+    padding-bottom: 0.3em;
+}
+
+#mappings-container {
+    background-color: #3b4048;
+    padding: 1em;
+    border-radius: 8px;
+    margin-bottom: 1em;
+}
+
+.mapping-entry {
+    margin-bottom: 1em;
+    padding: 0.8em;
+    background-color: #4b5263;
+    border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    align-items: center;
+}
+
+.mapping-entry label {
+    font-weight: bold;
+    color: #e5c07b;
+    margin-right: 10px;
+    flex-basis: 150px; /* Give label some space */
+    flex-grow: 0;
+}
+
+.mapping-entry select {
+    padding: 5px;
+    margin-right: 10px;
+    background-color: #282c34;
+    color: #abb2bf;
+    border: 1px solid #61afef;
+    border-radius: 4px;
+    flex-grow: 1; /* Allow select to take space */
+    min-width: 100px; /* Ensure minimum width */
+}
+
+.mapping-entry .keys-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    background-color: #282c34;
+    padding: 5px;
+    border: 1px solid #61afef;
+    border-radius: 4px;
+    min-height: 28px; /* Match select height */
+    flex-grow: 2; /* Allow key list more space */
+    align-items: center; /* Center keys vertically */
+}
+
+.key-pill {
+    background-color: #61afef;
+    color: #282c34;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    white-space: nowrap; /* Prevent wrapping inside pill */
+}
+
+.key-pill:hover {
+    background-color: #c678dd;
+}
+
+.add-key-btn {
+    padding: 3px 8px;
+    font-size: 1.1em;
+    line-height: 1;
+    cursor: pointer;
+    background-color: #98c379;
+    color: #282c34;
+    border: none;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+.add-key-btn:hover {
+    background-color: #e5c07b;
+}
+
+
+button {
+    padding: 10px 15px;
+    background-color: #61afef;
+    color: #282c34;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #c678dd;
+}
+
+#save-button {
+    background-color: #98c379;
+}
+#save-button:hover {
+    background-color: #e5c07b;
+}
+
+#status-message {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.status-success {
+    color: #98c379;
+}
+
+.status-error {
+    color: #e06c75;
+}
+
+/* Key selector popup */
+#available-keys-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #3b4048;
+    padding: 2em;
+    border: 1px solid #61afef;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 100;
+}
+#available-keys-container h3 {
+     margin-top: 0;
+     color: #e5c07b;
+}
+#key-selector {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #282c34;
+    color: #abb2bf;
+    border: 1px solid #61afef;
+}
+#available-keys-container button {
+    margin-right: 10px;
+}
+
+/* Simple focus indicator for touch */
+button:focus, select:focus, .key-pill:focus, .add-key-btn:focus {
+    outline: 2px solid #e5c07b;
+    outline-offset: 2px;
+}

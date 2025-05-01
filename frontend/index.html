@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MacroPad Config</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>NixOS MacroPad Configuration</h1>
+
+    <div id="mappings-container">
+        <h2>Button & Knob Mappings</h2>
+        <form id="mappings-form">
+            </form>
+        <button id="save-button">Save Mappings</button>
+        <p id="status-message"></p>
+    </div>
+
+    <div id="available-keys-container" style="display: none;">
+        <h3>Available Keys</h3>
+        <select id="key-selector">
+            </select>
+        <button id="add-key-button">Add Key</button>
+        <button id="cancel-key-button">Cancel</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
