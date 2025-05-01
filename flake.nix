@@ -55,11 +55,9 @@
               users.users.root.extraGroups = [ "input" ];
               users.users.weston.extraGroups = [ "input" ]; # Existing setting
 
-              # --- Add these lines to fix assertions ---
               users.users.weston.isSystemUser = true; # Define user type
               users.users.weston.group = "weston";    # Define primary group
               users.groups.weston = {};               # Define the 'weston' group
-              # --- End of additions ---
             }
           )
         ];
