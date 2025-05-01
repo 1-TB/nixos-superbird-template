@@ -45,11 +45,11 @@
               superbird.gui = {
                 enable = true;
                 kiosk_url = "http://localhost:5000";
-                environment.systemPackages = [ pkgs.chromium ];
+                # environment.systemPackages removed from here
               };
               networking.firewall.enable = false;
               networking.useDHCP = false;
-              environment.systemPackages = [ pkgs.python3 pkgs.git ];
+              environment.systemPackages = [ pkgs.python3 pkgs.git pkgs.chromium ];
               users.users.root.extraGroups = [ "input" ];
               users.users.weston.extraGroups = [ "input" ];
             }
@@ -75,4 +75,4 @@
 
     }; # End outputs
 
-}
+} # End of top-level flake attribute set
