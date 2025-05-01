@@ -14,7 +14,13 @@
     }:
     let
       targetSystem = "aarch64-linux";
-      pkgs_aarch64 = nixpkgs.legacyPackages.${targetSystem};
+      # --- Apply the nixos-superbird overlay ---
+      pkgs_aarch64 = import nixpkgs {
+        system = targetSystem;
+        # Use the overlay provided by the nixos-superbird input flake
+        overlays = [ nixos-superbird.overlays.default ];
+      };
+      # --- End overlay application ---
       macro-pad-backend-pkg = import ./nix/backend-package.nix { pkgs = pkgs_aarch64; };
     in
     {
@@ -23,14 +29,14 @@
         system = targetSystem;
         specialArgs = {
           inherit self;
-          pkgs = pkgs_aarch64;
+          pkgs = pkgs_aarch64; # Pass pkgs *with* the overlay applied
           macro-pad-backend-pkg = macro-pad-backend-pkg;
         };
         modules = [
           nixos-superbird.nixosModules.superbird
           ./nix/macro-pad-module.nix # Our custom module
           ( # Configuration previously in the flake.nix inline block
-            { config, pkgs, ... }:
+            { config, pkgs, ... }: # pkgs here also has the overlay
             {
               system.stateVersion = "24.11";
               superbird.stateVersion = "0.2";
@@ -45,7 +51,6 @@
               superbird.gui = {
                 enable = true;
                 kiosk_url = "http://localhost:5000";
-                # environment.systemPackages removed from here
               };
               networking.firewall.enable = false;
               networking.useDHCP = false;
