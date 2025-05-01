@@ -29,13 +29,14 @@
         };
         modules = [
           nixos-superbird.nixosModules.superbird
-          ./nix/macro-pad-module.nix # Our custom module definition
+          ./nix/macro-pad-module.nix
+          ./nix/backend-package.nix
           ( # Inline configuration block
             { config, pkgs, ... }:
             {
               system.stateVersion = "24.11";
               superbird.stateVersion = "0.2";
-              # superbird.installer.manualScript = true; # Uncomment if needed
+              # superbird.installer.manualScript = true;
               superbird.name = "NixOS MacroPad";
               superbird.version = "0.1.0";
               superbird.description = "A custom macro pad running on NixOS";
