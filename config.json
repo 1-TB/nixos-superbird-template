@@ -1,0 +1,50 @@
+{
+  "front_button_press": {
+    "keys": ["LEFT_CTRL"],
+    "type": "key_press"
+  },
+  "front_button_release": {
+    "keys": ["LEFT_CTRL"],
+    "type": "key_release"
+  },
+  "knob_ccw": {
+    "keys": ["VOLUME_DOWN"],
+    "type": "key_tap"
+  },
+  "knob_cw": {
+    "keys": ["VOLUME_UP"],
+    "type": "key_tap"
+  },
+  "top_button_1_press": {
+    "keys": ["A"],
+    "type": "key_tap"
+  },
+  "top_button_1_release": {
+    "keys": [],
+    "type": "none"
+  },
+  "top_button_2_press": {
+    "keys": ["B"],
+    "type": "key_tap"
+  },
+  "top_button_2_release": {
+    "keys": [],
+    "type": "none"
+  },
+  "top_button_3_press": {
+    "keys": ["C"],
+    "type": "key_tap"
+  },
+  "top_button_3_release": {
+    "keys": [],
+    "type": "none"
+  },
+  "top_button_4_press": {
+    "keys": ["D"],
+    "type": "key_tap"
+  },
+  "top_button_4_release": {
+    "keys": [],
+    "type": "none"
+  }
+}

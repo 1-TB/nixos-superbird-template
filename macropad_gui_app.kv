@@ -1,0 +1,151 @@
+#:kivy 2.1.0
+
+<StatusPopup>:
+    orientation: 'vertical'
+    padding: '10dp'
+    spacing: '10dp'
+    Label:
+        id: title_label
+        text: root.status_title
+        font_size: '20sp'
+        size_hint_y: None
+        height: self.texture_size[1]
+    Label:
+        id: text_label
+        text: root.status_text
+        font_size: '16sp'
+        halign: 'center'
+        valign: 'middle'
+    Button:
+        text: 'OK'
+        size_hint_y: None
+        height: '48dp'
+        on_press: root.dismiss_popup()
+
+<MappingEntryWidget>:
+    # action_name_prop, action_type_prop, action_keys_prop are used here
+    # app_instance_prop is available for callbacks
+    Label:
+        text: root.app_instance_prop.format_action_name_display(root.action_name_prop) if root.app_instance_prop else root.action_name_prop
+        size_hint_x: 0.35
+        halign: 'left'
+        valign: 'middle'
+        text_size: self.width, None # For wrapping
+    Label:
+        text: root.action_type_prop
+        size_hint_x: 0.35
+        halign: 'left'
+        valign: 'middle'
+        text_size: self.width, None
+    Label:
+        text: root.action_keys_prop
+        size_hint_x: 0.20
+        halign: 'left'
+        valign: 'middle'
+        text_size: self.width, None
+    Button:
+        text: 'Edit'
+        size_hint_x: 0.10
+        on_press: root.on_edit_press(root.action_name_prop)
+
+
+ScreenManager:
+    ConfigScreen:
+        name: 'config'
+    EditMappingScreen:
+        name: 'edit_mapping'
+
+<ConfigScreen>:
+    mappings_rv: mappings_recycle_view
+    BoxLayout:
+        orientation: 'vertical'
+        padding: '10dp'
+        spacing: '10dp'
+        Label:
+            text: "Macro Mappings"
+            font_size: '24sp'
+            size_hint_y: None
+            height: self.texture_size[1] + dp(10) # Add some padding
+
+        RecycleView:
+            id: mappings_recycle_view
+            viewclass: 'MappingEntryWidget' # Class of the item widget
+            RecycleBoxLayout:
+                default_size: None, dp(56) # Height of each item
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height # Grow with content
+                orientation: 'vertical'
+                spacing: dp(5)
+
+        Button:
+            text: "Refresh Mappings"
+            size_hint_y: None
+            height: "48dp"
+            on_press: root.refresh_mappings()
+        Label: # For general status or info
+            id: general_status_label
+            size_hint_y: None
+            height: '30dp'
+            text: "Touch an entry's Edit button to modify."
+
+<EditMappingScreen>:
+    action_name_label: action_name
+    type_spinner: type_spinner_id
+    keys_label: current_keys_display
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: '10dp'
+        spacing: '15dp'
+
+        Label:
+            id: action_name
+            text: "Editing: "
+            font_size: '22sp'
+            size_hint_y: None
+            height: self.texture_size[1] + dp(10)
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '48dp'
+            Label:
+                text: "Action Type:"
+                size_hint_x: 0.4
+            Spinner:
+                id: type_spinner_id
+                text: root.app_instance.format_type_name_display('none') if root.app_instance else 'None'
+                values: [root.app_instance.format_type_name_display(t) for t in ['key_tap', 'key_press', 'key_release', 'none']] if root.app_instance else []
+                size_hint_x: 0.6
+
+        Label:
+            id: current_keys_display
+            text: "Keys: None"
+            font_size: '18sp'
+            size_hint_y: None
+            height: self.texture_size[1] + dp(10)
+
+        GridLayout:
+            cols: 2
+            spacing: '10dp'
+            size_hint_y: None
+            height: '48dp'
+            Button:
+                text: "Add Key..."
+                on_press: root.add_key_popup()
+            Button:
+                text: "Remove Last Key"
+                on_press: root.remove_last_key()
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '48dp'
+            spacing: '10dp'
+            Button:
+                text: "Save"
+                on_press: root.save_current_mapping()
+            Button:
+                text: "Cancel"
+                on_press: root.go_back()

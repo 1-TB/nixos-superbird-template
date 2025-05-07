@@ -1,3 +1,4 @@
+# (Content from your uploaded file: 1-TB/nixos-superbird-template/nixos-superbird-template-98643453f63c8ed189e2fe01783dbf420038fe5b/backend/keycodes.py)
 # Source/Inspiration: https://github.com/micropython/micropython/blob/master/drivers/bluetooth/ble_hid_keyboard.py
 # And Linux input event codes: /usr/include/linux/input-event-codes.h
 
@@ -61,37 +62,43 @@ class KeycodeMap:
             "KP_4": (self.MOD_NONE, 0x5C), "KP_5": (self.MOD_NONE, 0x5D), "KP_6": (self.MOD_NONE, 0x5E),
             "KP_7": (self.MOD_NONE, 0x5F), "KP_8": (self.MOD_NONE, 0x60), "KP_9": (self.MOD_NONE, 0x61),
             "KP_0": (self.MOD_NONE, 0x62), "KP_PERIOD": (self.MOD_NONE, 0x63),
-            # Modifiers (represent these as separate keys if needed, or use MOD flags)
+            # Modifiers (represent these as separate keys if needed, or use MOD flags for combinations)
             "LEFT_CTRL": (self.MOD_LEFT_CTRL, 0x00), "LEFT_SHIFT": (self.MOD_LEFT_SHIFT, 0x00),
-            "LEFT_ALT": (self.MOD_LEFT_ALT, 0x00), "LEFT_GUI": (self.MOD_LEFT_GUI, 0x00),
+            "LEFT_ALT": (self.MOD_LEFT_ALT, 0x00), "LEFT_GUI": (self.MOD_LEFT_GUI, 0x00), # Windows/Super/Command
             "RIGHT_CTRL": (self.MOD_RIGHT_CTRL, 0x00), "RIGHT_SHIFT": (self.MOD_RIGHT_SHIFT, 0x00),
             "RIGHT_ALT": (self.MOD_RIGHT_ALT, 0x00), "RIGHT_GUI": (self.MOD_RIGHT_GUI, 0x00),
-            # Media Keys (Consumer Page 0x0C) - Need different report structure usually
-            # For simplicity, map to common F-key equivalents if possible, or implement consumer report
-            "VOLUME_UP": (self.MOD_NONE, 0x80), # Usage ID 0xE9 from consumer page (map to F key or implement consumer report)
-            "VOLUME_DOWN": (self.MOD_NONE, 0x81), # Usage ID 0xEA from consumer page (map to F key or implement consumer report)
-            "MUTE": (self.MOD_NONE, 0x7F), # Usage ID 0xE2
-            "PLAY_PAUSE": (self.MOD_NONE, 0xCD), # Usage ID 0xCD
-            "NEXT_TRACK": (self.MOD_NONE, 0xB5), # Usage ID 0xB5
-            "PREV_TRACK": (self.MOD_NONE, 0xB6), # Usage ID 0xB6
-            "STOP_MEDIA": (self.MOD_NONE, 0xB7), # Usage ID 0xB7
+            # Media Keys (Consumer Page 0x0C) - These require a different HID report descriptor and handling.
+            # For simplicity here, they are mapped to regular keycodes that MIGHT be interpreted by some OSes
+            # as media keys if suitable software (or desktop environment) is running.
+            # True media key support requires a Consumer Control HID report.
+            # The current hid_service.py uses a standard keyboard report descriptor.
+            "VOLUME_UP": (self.MOD_NONE, 0x80),   # Placeholder - often F15 or custom. True HID: Consumer Page, Usage ID 0xE9
+            "VOLUME_DOWN": (self.MOD_NONE, 0x81), # Placeholder - often F14 or custom. True HID: Consumer Page, Usage ID 0xEA
+            "MUTE": (self.MOD_NONE, 0x7F),        # Placeholder - often F13 or custom. True HID: Consumer Page, Usage ID 0xE2
+            "PLAY_PAUSE": (self.MOD_NONE, 0xCD),  # Keyboard Play/Pause. True HID: Consumer Page, Usage ID 0xCD
+            "NEXT_TRACK": (self.MOD_NONE, 0xB5),  # Keyboard Next Track. True HID: Consumer Page, Usage ID 0xB5
+            "PREV_TRACK": (self.MOD_NONE, 0xB6),  # Keyboard Previous Track. True HID: Consumer Page, Usage ID 0xB6
+            "STOP_MEDIA": (self.MOD_NONE, 0xB7),  # Keyboard Stop. True HID: Consumer Page, Usage ID 0xB7
             # Placeholder for None/Empty Action
-            "NONE": (self.MOD_NONE, 0x00),
+            "NONE": (self.MOD_NONE, 0x00), # Represents no key press
         }
 
         # Map Usage ID back to name if needed (e.g., for display)
-        self.CODE_TO_NAME = {v[1]: k for k, v in self.NAME_TO_CODE.items() if v[1] != 0x00}
-        # Add modifiers separately if needed for display
-        self.CODE_TO_NAME[0xE0] = "LEFT_CTRL" # Approx mapping
-        self.CODE_TO_NAME[0xE1] = "LEFT_SHIFT"
-        # ...
+        # This is a simplified reverse map and won't perfectly distinguish all keys if codes overlap (e.g. 0x00 for modifiers)
+        self.CODE_TO_NAME = {v[1]: k for k, v in self.NAME_TO_CODE.items() if v[1] != 0x00} # Exclude 0x00 keys for direct lookup
+        # Add modifiers explicitly if you want to look them up by a "fake" keycode (not standard)
+        # For display purposes, it's better to check the modifier byte directly.
+        # self.CODE_TO_NAME[0xE0] = "LEFT_CTRL" # Example, not a real keycode for Left Ctrl alone in report byte 2-7
+
 
     def get_codes(self, key_name):
         """Returns (modifier_mask, key_code) tuple for a given key name."""
         key_name_upper = key_name.upper()
-        return self.NAME_TO_CODE.get(key_name_upper, (self.MOD_NONE, 0x00)) # Return None/0x00 if not found
+        # For modifier keys like "LEFT_CTRL", the key_code part is 0x00 as they only set bits in the modifier byte.
+        return self.NAME_TO_CODE.get(key_name_upper, (self.MOD_NONE, 0x00)) # Return (MOD_NONE, 0x00) for "NONE" or unknown
 
-    def get_name(self, key_code):
-        """Returns key name for a given HID Usage ID (key code part)."""
-        # Note: This doesn't handle modifiers easily from code alone
-        return self.CODE_TO_NAME.get(key_code, "UNKNOWN")
+    def get_name(self, key_code_to_find):
+        """Returns primary key name for a given HID Usage ID (key code part from bytes 2-7).
+           Does not resolve modifiers directly from this call.
+        """
+        return self.CODE_TO_NAME.get(key_code_to_find, "UNKNOWN")
